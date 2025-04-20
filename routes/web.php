@@ -1,18 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 use App\Http\Controllers\ConfiguracoesController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\SistemaController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
 
+// Página inicial
+
+// Rotas protegidas por autenticação
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/configuracoes', [ConfiguracoesController::class, 'index'])->name('configuracoes');
     Route::post('/configuracoes', [ConfiguracoesController::class, 'salvar'])->name('configuracoes.salvar');
+    Route::resource('usuarios', UsuarioController::class)->except(['show', 'edit', 'update', 'create']);
+    Route::post('usuarios/{usuario}/permissoes', [UsuarioController::class, 'updatePermissoes'])->name('usuarios.updatePermissoes');
+});
+
+// Rotas protegidas por permissão de Administrador
+Route::middleware(['auth', 'permission:Administrador'])->group(function () {
+    Route::post('/sistema/backup', [SistemaController::class, 'backup'])->name('sistema.backup');
+    Route::post('/sistema/restaurar', [SistemaController::class, 'restaurar'])->name('sistema.restaurar');
 });
 
 // Página de login (GET)
@@ -21,10 +31,6 @@ Route::get('/login', function () {
 })->name('login');
 
 // Autenticação manual (POST)
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Models\User;
-
 Route::post('/login', function (Request $request) {
     $credentials = $request->only('email', 'password');
     if (Auth::attempt($credentials)) {
@@ -41,3 +47,5 @@ Route::post('/logout', function (Request $request) {
     $request->session()->regenerateToken();
     return redirect('/login');
 })->name('logout');
+
+

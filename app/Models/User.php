@@ -9,6 +9,29 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function permissoes()
+    {
+        return $this->belongsToMany(\App\Models\Permissao::class, 'permissao_user');
+    }
+
+    public function hasPermissao($nome)
+    {
+        return $this->permissoes->contains('nome', $nome);
+    }
+    public function isAdministrador()
+    {
+        return $this->hasPermissao('Administrador');
+    }
+    public function isEditor()
+    {
+        return $this->hasPermissao('Editor');
+    }
+    public function isVisualizador()
+    {
+        return $this->hasPermissao('Visualizador');
+    }
+
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
