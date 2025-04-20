@@ -123,51 +123,66 @@
         </tbody>
     </table>
     <hr class="my-5">
-    <h4 class="mb-3">Configurações de Sistema</h4>
-    <form method="POST" action="#" class="row g-3 mb-4">
+    <h2>Configurações de Sistema</h2>
+
+    <hr class="my-5">
+
+
+    <form method="POST" action="{{ route('configuracoes.smtp.salvar') }}" class="card mb-4">
         @csrf
-        <div class="col-md-2">
-            <label class="form-label">Driver</label>
-            <input type="text" name="db_driver" class="form-control" value="{{ env('DB_CONNECTION') }}" disabled>
+        <div class="card-header bg-secondary text-white">
+            <i class="bi bi-envelope"></i> Configuração de SMTP (E-mail)
         </div>
-        <div class="col-md-2">
-            <label class="form-label">Host</label>
-            <input type="text" name="db_host" class="form-control" value="{{ env('DB_HOST') }}" disabled>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Porta</label>
-            <input type="text" name="db_port" class="form-control" value="{{ env('DB_PORT') }}" disabled>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Database</label>
-            <input type="text" name="db_database" class="form-control" value="{{ env('DB_DATABASE') }}" disabled>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Usuário</label>
-            <input type="text" name="db_username" class="form-control" value="{{ env('DB_USERNAME') }}" disabled>
-        </div>
-        <div class="col-12 text-end">
-            <span class="text-muted small">Para alterar as configurações do banco de dados, edite o arquivo <code>.env</code> e reinicie o sistema.</span>
+        <div class="card-body row g-3">
+            <div class="col-md-4">
+                <label for="mail_host" class="form-label">Host SMTP</label>
+                <input type="text" class="form-control" id="mail_host" name="mail_host" value="{{ env('MAIL_HOST') }}" required>
+            </div>
+            <div class="col-md-2">
+                <label for="mail_port" class="form-label">Porta</label>
+                <input type="number" class="form-control" id="mail_port" name="mail_port" value="{{ env('MAIL_PORT') }}" required>
+            </div>
+            <div class="col-md-3">
+                <label for="mail_username" class="form-label">Usuário</label>
+                <input type="text" class="form-control" id="mail_username" name="mail_username" value="{{ env('MAIL_USERNAME') }}">
+            </div>
+            <div class="col-md-3">
+                <label for="mail_password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="mail_password" name="mail_password" value="{{ env('MAIL_PASSWORD') }}">
+            </div>
+            <div class="col-md-3">
+                <label for="mail_encryption" class="form-label">Criptografia</label>
+                <select class="form-select" id="mail_encryption" name="mail_encryption">
+                    <option value="" {{ env('MAIL_ENCRYPTION')=='' ? 'selected' : '' }}>Nenhuma</option>
+                    <option value="tls" {{ env('MAIL_ENCRYPTION')=='tls' ? 'selected' : '' }}>TLS</option>
+                    <option value="ssl" {{ env('MAIL_ENCRYPTION')=='ssl' ? 'selected' : '' }}>SSL</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label for="mail_from_address" class="form-label">Remetente (From)</label>
+                <input type="email" class="form-control" id="mail_from_address" name="mail_from_address" value="{{ env('MAIL_FROM_ADDRESS') }}">
+            </div>
+            <div class="col-md-4">
+                <label for="mail_from_name" class="form-label">Nome do Remetente</label>
+                <input type="text" class="form-control" id="mail_from_name" name="mail_from_name" value="{{ env('MAIL_FROM_NAME') }}">
+            </div>
+            <div class="col-12 text-end mt-3">
+                <button type="submit" class="btn btn-primary">Salvar SMTP</button>
+            </div>
         </div>
     </form>
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
-    <div class="d-flex gap-3 mb-3">
-        <form method="POST" action="{{ route('sistema.backup') }}">
-            @csrf
-            <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-download"></i> Fazer backup</button>
-        </form>
-        <form method="POST" action="{{ route('sistema.restaurar') }}" enctype="multipart/form-data">
-            @csrf
-            <label class="btn btn-outline-secondary mb-0">
-                <i class="bi bi-upload"></i> Restaurar backup
-                <input type="file" name="backup_file" accept=".sql,.zip" hidden onchange="this.form.submit()">
-            </label>
-        </form>
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <i class="bi bi-bell"></i> Notificações e Alertas
+        </div>
+        <div class="card-body">
+            <p>Personalize como deseja ser alertado pelo sistema (e-mail, SMS, push notification) e defina o nível mínimo de prioridade para ser notificado.</p>
+            <a href="{{ route('notificacoes.config') }}" class="btn btn-outline-info">
+                <i class="bi bi-gear"></i> Configurar Notificações
+            </a>
+        </div>
     </div>
+
 </div>
 @endsection

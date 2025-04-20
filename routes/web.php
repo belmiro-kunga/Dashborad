@@ -12,6 +12,12 @@ use App\Models\User;
 
 // Rotas protegidas por autenticação
 Route::middleware(['auth'])->group(function () {
+    Route::get('/seguranca/2fa', [\App\Http\Controllers\TwoFactorController::class, 'show'])->name('2fa.show');
+    Route::post('/seguranca/2fa/enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('2fa.enable');
+    Route::post('/seguranca/2fa/disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('2fa.disable');
+    Route::post('/configuracoes/smtp', [ConfiguracoesController::class, 'salvarSmtp'])->name('configuracoes.smtp.salvar');
+    Route::get('/notificacoes/config', [\App\Http\Controllers\NotificacaoConfigController::class, 'edit'])->name('notificacoes.config');
+    Route::post('/notificacoes/config', [\App\Http\Controllers\NotificacaoConfigController::class, 'update'])->name('notificacoes.config.salvar');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/configuracoes', [ConfiguracoesController::class, 'index'])->name('configuracoes');
     Route::post('/configuracoes', [ConfiguracoesController::class, 'salvar'])->name('configuracoes.salvar');
